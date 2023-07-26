@@ -1,5 +1,6 @@
 // module aliases
-const { Engine, Render, Runner, World, Bodies, Composite } = Matter;
+const { Engine, Render, Runner, World, Bodies, Mouse, MouseConstraint } =
+    Matter;
 
 // create an engine
 const engine = Engine.create();
@@ -7,6 +8,8 @@ const { world } = engine;
 const height = window.innerHeight;
 const width = window.innerWidth;
 const wallThickness = 5;
+const columns = 3;
+const rows = 3;
 
 // create a renderer
 const render = Render.create({
@@ -27,16 +30,13 @@ var runner = Runner.create();
 
 // run the engine
 Runner.run(runner, engine);
-
-// create two boxes and a ground
-var boxA = Bodies.rectangle(400, 200, 80, 80);
-var boxB = Bodies.rectangle(450, 50, 80, 80);
-//var ground = Bodies.rectangle(500, 830, 1000, 60, { isStatic: true });
-
-// add all of the bodies to the world
-//Composite.add(engine.world, [boxA, boxB, ground]);
-World.add(world, [boxA, boxB]);
-console.log(Matter);
+//add mouse capability to darg and throw bodies with mouse
+World.add(
+    world,
+    MouseConstraint.create(engine, {
+        mouse: Mouse.create(render.canvas),
+    })
+);
 
 const walls = [
     //upper wall
@@ -69,3 +69,31 @@ const walls = [
     }),
 ];
 World.add(world, walls);
+
+//Maze Generation
+
+// const grid = [];
+// for (let i = 0; i < 3; i++) {
+//     grid.push([]);
+//     for (let j = 0; j < 3; j++) {
+//         grid[i].push(false);
+//     }
+// }
+
+const grid = Array(rows)
+    .fill(null)
+    .map(() => {
+        return Array(columns).fill(false);
+    });
+const verticals = Array(rows)
+    .fill(null)
+    .map(() => {
+        return Array(columns - 1).fill(false);
+    });
+const horizontals = Array(rows - 1)
+    .fill(null)
+    .map(() => {
+        return Array(columns).fill(false);
+    });
+
+console.log(grid, verticals, horizontals);
