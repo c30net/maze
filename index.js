@@ -1,5 +1,5 @@
 // module aliases
-const { Engine, Render, Runner, World, Bodies, Mouse, MouseConstraint } =
+const { Engine, Render, Runner, World, Bodies, Mouse, MouseConstraint, Body } =
     Matter;
 
 // create an engine
@@ -249,3 +249,22 @@ const ball = Bodies.circle(
     }
 );
 World.add(world, ball);
+//arrow key event listener
+document.addEventListener('keydown', (event) => {
+    switch (event.key) {
+        case 'd':
+            console.log('ArrowRight');
+            break;
+        case 'a':
+            console.log('ArrowLeft');
+            break;
+        case 'w':
+            console.log('ArrowUp');
+            break;
+        case 's':
+            console.log('ArrowDown');
+            break;
+        default:
+            console.log('Push one of the arrow keys');
+    }
+});
