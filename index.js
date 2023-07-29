@@ -1,13 +1,22 @@
 // module aliases
-const { Engine, Render, Runner, World, Bodies, Mouse, MouseConstraint, Body } =
-    Matter;
+const {
+    Engine,
+    Render,
+    Runner,
+    World,
+    Bodies,
+    Mouse,
+    MouseConstraint,
+    Body,
+    Events,
+} = Matter;
 
 // create an engine
-const engine = Engine.create();
+const engine = Engine.create({ gravity: { y: 0 } });
 const { world } = engine;
 const height = window.innerHeight;
 const width = window.innerWidth;
-const wallThickness = 5;
+const wallThickness = 1;
 let columns = 9;
 let rows = 16;
 if (innerHeight > innerWidth) {
@@ -36,7 +45,9 @@ Render.run(render);
 var runner = Runner.create();
 
 // run the engine
+
 Runner.run(runner, engine);
+
 //add mouse capability to darg and throw bodies with mouse
 World.add(
     world,
@@ -225,10 +236,11 @@ horizontals.forEach((hWalls, index3) => {
 const goal = Bodies.rectangle(
     width - horizontalWall / 2,
     height - verticalWall / 2,
-    horizontalWall * 0.8,
-    verticalWall * 0.8,
+    horizontalWall > verticalWall ? verticalWall / 1.2 : horizontalWall / 1.2,
+    horizontalWall > verticalWall ? verticalWall / 1.2 : horizontalWall / 1.2,
     {
         isStatic: true,
+        label: 'goal',
         render: {
             fillStyle: 'yellow',
         },
@@ -243,6 +255,8 @@ const ball = Bodies.circle(
 
     {
         isStatic: false,
+        label: 'ball',
+        mass: 0.0000000000001,
         render: {
             fillStyle: 'red',
         },
@@ -251,20 +265,38 @@ const ball = Bodies.circle(
 World.add(world, ball);
 //arrow key event listener
 document.addEventListener('keydown', (event) => {
+    const { x, y } = ball.velocity;
     switch (event.key) {
-        case 'd':
-            console.log('ArrowRight');
+        case 'ArrowRight':
+            Body.setVelocity(ball, { x: 3, y: 0 });
             break;
-        case 'a':
-            console.log('ArrowLeft');
+        case 'ArrowLeft':
+            Body.setVelocity(ball, { x: -3, y: 0 });
             break;
-        case 'w':
-            console.log('ArrowUp');
+        case 'ArrowUp':
+            Body.setVelocity(ball, { x: 0, y: -3 });
             break;
-        case 's':
-            console.log('ArrowDown');
+        case 'ArrowDown':
+            Body.setVelocity(ball, { x: 0, y: 3 });
             break;
         default:
             console.log('Push one of the arrow keys');
+    }
+});
+
+//Win condition
+
+Events.on(engine, 'collisionStart', (event) => {
+    const labels = ['ball', 'goal'];
+
+    if (
+        labels.includes(event.pairs[0].bodyA.label) &&
+        labels.includes(event.pairs[0].bodyB.label)
+    ) {
+        world.bodies.forEach((bodie) => {
+            Body.setStatic(bodie, false);
+            world.gravity.y = -0.05;
+            document.querySelector('div').classList.remove('hidden');
+        });
     }
 });
