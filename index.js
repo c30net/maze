@@ -54,7 +54,7 @@ const walls = [
         },
     }),
     //right wall
-    Bodies.rectangle(width, height / 2, wallThickness, width, {
+    Bodies.rectangle(width, height / 2, wallThickness, height, {
         isStatic: true,
         render: {
             fillStyle: 'red',
@@ -68,7 +68,7 @@ const walls = [
         },
     }),
     //left wall
-    Bodies.rectangle(0, height / 2, wallThickness, width, {
+    Bodies.rectangle(0, height / 2, wallThickness, height, {
         isStatic: true,
         render: {
             fillStyle: 'red',
